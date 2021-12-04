@@ -1,0 +1,7 @@
+# For Testing and code checking
+pytest
+python-ta
+
+# For data analysis
+matplotlib
+scikit-learn
