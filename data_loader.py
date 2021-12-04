@@ -62,21 +62,42 @@ class CompressedDeal:
     total_funding = int
 
 
-def read_csv(csv_path: str) -> list[CompressedDeal]:
-    """"""
+def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
+    """Return a list of CompressedDeal/Deal based on the data in a csv filepath. 
+
+    If compressed is True, a list of CompressedDeal would be returned. Using a list of CompressedDeal
+    will be more memory efficient than using a list of Deal as the descriptions and investor details
+    are omitted. This is appropriate when we are only analysing the patterns in funding amounts
+    rather than the identities of the companies or the investors.
+
+    The data in csv files have 10 columns, each corresponding to a category of data as shown in the
+    order of the instance attributes in Deal. All data are stored as strings, hence corresponding 
+    data type conversion will also be handled in this function."""
     deal_ls = []
     with open(csv_path) as f:
         reader = csv.reader(f, delimiter=',')
         next(reader)  # skip the header
 
         for deal_row in reader:
-            deal = CompressedDeal(deal_row[0],
-                                  deal_row[1],
-                                  str_funding_to_int(deal_row[2]),
-                                  str_deal_date_to_datetime(deal_row[3]),
-                                  deal_row[6],
-                                  deal_row[7],
-                                  str_funding_to_int(deal_row[8]))
+            if compressed:
+                deal = CompressedDeal(deal_row[0],
+                                      deal_row[1],
+                                      str_funding_to_int(deal_row[2]),
+                                      str_deal_date_to_datetime(deal_row[3]),
+                                      deal_row[6],
+                                      deal_row[7],
+                                      str_funding_to_int(deal_row[8]))
+            else:
+                deal = Deal(deal_row[0],
+                            deal_row[1],
+                            str_funding_to_int(deal_row[2]),
+                            str_deal_date_to_datetime(deal_row[3]),
+                            str_investors_to_list(deal_row[4]),
+                            deal_row[5],
+                            deal_row[6],
+                            deal_row[7],
+                            str_funding_to_int(deal_row[8]),
+                            str_investors_to_list(deal_row[9]))
 
             deal_ls.append(deal)
 
@@ -114,3 +135,14 @@ def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
     month = deal_date_str.split('/')[1]
     year = deal_date_str.split('/')[2]
     return datetime.datetime(year, month, day)
+
+
+def str_investors_to_list(investors_str: str) -> list[str]:
+    """Convert investors strings into list of investor strings.
+    
+    Sample Usage:
+    
+    >>> str_investors_to_list('YC, Andreesson Horowitz, Tiger Global')
+    ['YC', 'Andreessen Horowitz', 'Tiger Global']
+    """
+    return investors_str.split(', ')
