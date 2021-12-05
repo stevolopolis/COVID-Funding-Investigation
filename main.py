@@ -61,24 +61,6 @@ def visualize_categories(category: Optional[str] = 'stage',
             plt.show()
 
 
-def visualize_multi_categories(metric: Optional[str] = 'sum', interval: Optional[str] = 'quarter') -> None:
-    visualize = True
-    while visualize:
-        sum_monthly_deals = {}
-        for year in range(15, 21):
-            csv_filepath = 'scraped_deal_data_%s.csv' % year
-            deals = read_csv(csv_filepath, compressed=True)
-            categorized_deals = funding_per_interval(deals, category=category, metric=metric, interval=interval)
-            for sub_category in categorized_deals:
-                if sub_category not in sum_monthly_deals:
-                    sum_monthly_deals[sub_category] = {}
-                sum_monthly_deals[sub_category][year] = categorized_deals[sub_category]
-
-        for cat in sum_monthly_deals:
-            v_monthly_deals = concat_monthly_deals(sum_monthly_deals[cat])
-            vis_funding_per_interval(v_monthly_deals, '2015-2020 Total Funding Graph For %s' % selected_category)
-
-
 if __name__ == '__main__':
-    visualize_raw_funding(metric='mean', interval='quarter')
+    visualize_raw_funding(metric='median', interval='quarter')
     #visualize_categories(category='stage', metric='sum', interval='quarter')
