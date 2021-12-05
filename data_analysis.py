@@ -74,27 +74,27 @@ def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum'
     >>> funding_per_month(deals, metric='sum)
     {'Jan': ...}
     """
-    yearly_deals = {month: [] for month in MONTHS}
-    yearly_deals_metric = {month: 0 for month in MONTHS}
+    monthly_deals = {month: [] for month in MONTHS}
+    monthly_deals_metric = {month: 0 for month in MONTHS}
     for deal in deals:
         deal_date_month = datetime_to_month(deal.deal_date)
-        yearly_deals[deal_date_month].append(deal.deal_size)
+        monthly_deals[deal_date_month].append(deal.deal_size)
         
-    for m in yearly_deals:
+    for m in monthly_deals:
         if metric == 'sum':
-            yearly_deals_metric[m] = sum(yearly_deals[m])
+            monthly_deals_metric[m] = sum(monthly_deals[m])
         elif metric == 'mean':
-            yearly_deals_metric[m] = statistics.mean(yearly_deals[m])
+            monthly_deals_metric[m] = statistics.mean(monthly_deals[m])
         elif metric == 'median':
-            yearly_deals_metric[m] = statistics.median(yearly_deals[m])
+            monthly_deals_metric[m] = statistics.median(monthly_deals[m])
         elif metric == 'max':
-            yearly_deals_metric[m] = max(yearly_deals[m])
+            monthly_deals_metric[m] = max(monthly_deals[m])
         elif metric == 'min':
-            yearly_deals_metric[m] = min(yearly_deals[m])
+            monthly_deals_metric[m] = min(monthly_deals[m])
 
-    return yearly_deals_metric
+    return monthly_deals_metric
 
 
 def datetime_to_month(date: datetime) -> str:
-    month_int = datetime.strptime('%m')
+    month_int = int(date.strftime('%m'))
     return MONTHS[month_int - 1]
