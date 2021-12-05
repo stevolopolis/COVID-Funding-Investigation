@@ -81,7 +81,7 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
         for deal_row in reader:
             if compressed:
                 deal = CompressedDeal(deal_row[0],
-                                      deal_row[1],
+                                      filter_str_stage(deal_row[1]),
                                       str_funding_to_int(deal_row[2]),
                                       str_deal_date_to_datetime(deal_row[3]),
                                       deal_row[6],
@@ -89,7 +89,7 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
                                       str_funding_to_int(deal_row[8]))
             else:
                 deal = Deal(deal_row[0],
-                            deal_row[1],
+                            filter_str_stage(deal_row[1]),
                             str_funding_to_int(deal_row[2]),
                             str_deal_date_to_datetime(deal_row[3]),
                             str_investors_to_list(deal_row[4]),
@@ -126,6 +126,10 @@ def str_funding_to_int(funding_str: str) -> int:
         funding_str = funding_str[1:-1].replace(',', '') # remove '$', 'M', and ',' from string
         funding_int = float(funding_str) * 1000000
         return funding_int
+
+
+def filter_str_stage(stage_str: str) -> str:
+    return stage_str.split(' - ')[0]
 
 
 def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
