@@ -23,16 +23,16 @@ class Deal:
         - total_funding: total amount of funding in USD received by the company
         - a_investors: list of all investors that has invested into the company
     """
-    company = str
-    stage = str
-    deal_size = int
-    deal_date = datetime.datetime
-    r_investors = list[str]
-    description = str
-    industry = str
-    country = str
-    total_funding = int
-    a_investors = list[str]
+    company: str
+    stage: str
+    deal_size: int
+    deal_date: datetime.datetime
+    r_investors: list[str]
+    description: str
+    industry: str
+    country: str
+    total_funding: int
+    a_investors: list[str]
 
 
 @dataclass
@@ -53,13 +53,13 @@ class CompressedDeal:
         - country: country of the company
         - total_funding: total amount of funding in USD received by the company
     """
-    company = str
-    stage = str
-    deal_size = int
-    deal_date = datetime.datetime
-    industry = str
-    country = str
-    total_funding = int
+    company: str
+    stage: str
+    deal_size: int
+    deal_date: datetime.datetime
+    industry: str
+    country: str
+    total_funding: int
 
 
 def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
@@ -74,7 +74,7 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
     order of the instance attributes in Deal. All data are stored as strings, hence corresponding 
     data type conversion will also be handled in this function."""
     deal_ls = []
-    with open(csv_path) as f:
+    with open(csv_path, encoding='utf-8') as f:
         reader = csv.reader(f, delimiter=',')
         next(reader)  # skip the header
 
@@ -120,11 +120,11 @@ def str_funding_to_int(funding_str: str) -> int:
     >>> str_funding_to_int('N/A')
     0
     """
-    if funding_str == '' or 'N/A':
+    if funding_str == '' or funding_str == 'N/A':
         return 0
     else:
         funding_str = funding_str[1:-1].replace(',', '') # remove '$', 'M', and ',' from string
-        funding_int = int(funding_str) * 1000000 
+        funding_int = float(funding_str) * 1000000
         return funding_int
 
 
@@ -138,9 +138,9 @@ def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
     >>> str_deal_date_to_datetime('10/19/2017')
     datetime.datetime(2017, 19, 10)
     """
-    day = deal_date_str.split('/')[0]
-    month = deal_date_str.split('/')[1]
-    year = deal_date_str.split('/')[2]
+    day = int(deal_date_str.split('/')[1])
+    month = int(deal_date_str.split('/')[0])
+    year = int(deal_date_str.split('/')[2])
     return datetime.datetime(year, month, day)
 
 
