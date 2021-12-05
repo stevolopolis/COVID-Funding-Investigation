@@ -7,7 +7,7 @@ import math
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 
-def funding_per_category(categorized_deals_dict: dict[str, CompressedDeal], metric: Optional[str] = 'sum') -> dict[str, dict[str, int]]:
+def funding_per_category(deals: list[CompressedDeal], category: str, metric: Optional[str] = 'sum') -> dict[str, dict[str, int]]:
     """Return a dictionary mapping each category to a dictionary returned by funding_per_month().
     
     Used for generating monthly funding line graphs for each selected category.
@@ -16,10 +16,10 @@ def funding_per_category(categorized_deals_dict: dict[str, CompressedDeal], metr
     
     >>> from data_loader import read_csv
     >>> deals = read_csv('scraped_deal_data_15.csv', compressed=True)
-    >>> categorized_deals_dict = categorize_deals(deals, 'country')
-    >>> funding_per_category(categorized_deals_dict, metric='sum')
+    >>> funding_per_category(deals, metric='sum')
     {'USA': {'Jan': 0, 'Feb: 0, ...}, 'China': {'Jan': 0, 'Feb: 0, ...}}
     """
+    categorized_deals_dict = categorize_deals(deals, category)
     funding_per_cat = {}
     for cat in categorized_deals_dict:
         funding_per_cat[cat] = funding_per_month(categorized_deals_dict[cat], metric=metric)
