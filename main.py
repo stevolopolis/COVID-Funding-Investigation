@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 
 def concat_monthly_deals(monthly_deals: dict[str, dict[str, int]]) -> dict[str, int]:
+    """Return a dictionary mapping dates in the form of '<year>-<month>' to the corresponding fundings.
+    Takes in a dictionary mapping years to a dictionary of monthly deals."""
     cat_monthly_deals = {}
     for year in range(15, 21):
         for month in monthly_deals[year]:
@@ -16,6 +18,8 @@ def concat_monthly_deals(monthly_deals: dict[str, dict[str, int]]) -> dict[str, 
 
 # For visualizing raw fundings per month over 2015-2020
 def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str] = 'month') -> None:
+    """Visualize line graph of raw funding amounts from 2015 to 2020.
+    Includes options to select metrics (as mentioned in data_analysis.py) and intervals ('month', 'quarter')."""
     multi_interval_deals = {}
     for year in range(15, 21):
         csv_filepath = 'scraped_deal_data_%s.csv' % year
@@ -35,6 +39,8 @@ def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str]
 def visualize_categories(category: Optional[str] = 'stage',
                          metric: Optional[str] = 'sum',
                          interval: Optional[str] = 'quarter') -> None:
+    """VIsualize line graphs of funding amounts based on the selected category.
+    Takes in inference-time user input for the sub-categories to be visualized."""
     visualize = True
     fig, ax = plt.subplots(1, 1)
     while visualize:
