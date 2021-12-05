@@ -107,7 +107,9 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
 def str_funding_to_int(funding_str: str) -> int:
     """Convert funding strings into integer values.
     
-    Funding strings in CSV files are in the following format: '$1,000.00M'
+    Funding strings in CSV files are in the following format: '$1,000.00M'.
+    For rows/deals that do not have funding amount data, they will be saved
+    as empty strings or 'N/A'. These will be treated as 0.
     
     Sample Usage:
 
@@ -115,10 +117,15 @@ def str_funding_to_int(funding_str: str) -> int:
     1000000
     >>> str_funding_to_int('$0.02M')
     20000
+    >>> str_funding_to_int('N/A')
+    0
     """
-    funding_str = funding_str[1:-1].replace(',', '') # remove '$', 'M', and ',' from string
-    funding_int = int(funding_str) * 1000000 
-    return funding_int
+    if funding_str == '' or 'N/A':
+        return 0
+    else:
+        funding_str = funding_str[1:-1].replace(',', '') # remove '$', 'M', and ',' from string
+        funding_int = int(funding_str) * 1000000 
+        return funding_int
 
 
 def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
