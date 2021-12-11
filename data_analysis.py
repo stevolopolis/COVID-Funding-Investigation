@@ -65,7 +65,64 @@ def categorize_deals(deals: list[CompressedDeal], category: str) -> dict[str, Co
                 deals_dict[deal.stage].append(deal)
             else:
                 deals_dict[deal.stage] = [deal]
+        elif category == 'company':
+            if deal.deal_size == 0 or deal.company == '':
+                continue
+            elif deal.company in deals_dict:
+                deals_dict[deal.company].append(deal)
+            else:
+                deals_dict[deal.company] = [deal]
     return deals_dict
+
+
+def funding_per_country(deals: list[CompressedDeal], year: str) -> dict[str, int]:
+    """Return a dictionary mapping countries to their total funding amounts during covid.
+    
+    The covid period is defined to start from 20-Jan to 20-Dec. 
+    (Optional: create slider to control the definition of 'covid period'.)
+    
+    Sample Usage:
+    >>> from data_loader import read_csv
+    >>> deals = read_csv('scraped_deal_data_15.csv, compressed=True)
+    >>> funding_per_country(deals)
+    {'United States': ..., 'China': ..., ...}
+    """
+    country_deals_dict = categorize_deals(deals, 'country')
+    country_year_deals = {country: 0 for country in country_deals_dict}
+    for country in country_deals_dict:
+        for deal in country_deals_dict[country]:
+            deal_year = datetime_to_year(deal.deal_date)
+            if deal_year == year:
+                country_year_deals[country] += deal.deal_size
+    
+    return country_year_deals
+
+
+def funding_per_company(deals: list[CompressedDeal], year:str) -> dict[str, int]:
+    """Return a dictionary mapping companies to their total funding amounts during covid.
+    
+    The covid period is defined to start from 20-Jan to 20-Dec. 
+    (Optional: create slider to control the definition of 'covid period'.)
+    
+    Sample Usage:
+    >>> from data_loader import read_csv
+    >>> deals = read_csv('scraped_deal_data_15.csv, compressed=True)
+    >>> funding_per_company(deals)
+    {'Spotify': ..., 'Slack': ..., ...}
+    """
+    company_deals_dict = categorize_deals(deals, 'company')
+    country_year_deals = {company: 0 for company in company_deals_dict}
+    for company in company_deals_dict:
+        for deal in company_deals_dict[company]:
+            deal_year = datetime_to_year(deal.deal_date)
+            if deal_year == year:
+                country_year_deals[company] += deal.deal_size
+
+    return country_year_deals
+
+
+def funding_per_company_type(deals: list[CompressedDeal], rel: Optional[bool] = False) -> dict[str, int]:
+    return None
 
 
 def funding_per_quarter(deals: list[CompressedDeal], metric: Optional[str] = 'sum', rel: Optional[bool] = False) -> dict[str, int]:
@@ -162,6 +219,11 @@ def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum'
 def datetime_to_month(date: datetime) -> str:
     month_int = int(date.strftime('%m'))
     return MONTHS[month_int - 1]
+
+
+def datetime_to_year(date: datetime) -> str:
+    year_int = int(date.strftime('%y'))
+    return str(year_int)
 
 
 def get_mean(data_ls: list[int]) -> int:
