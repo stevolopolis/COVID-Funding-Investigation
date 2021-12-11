@@ -7,7 +7,7 @@ import math
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 
-def funding_per_category(deals: list[CompressedDeal], category: str, metric: Optional[str] = 'sum') -> dict[str, dict[str, int]]:
+def funding_per_interval(deals: list[CompressedDeal], category: str, metric: Optional[str] = 'sum', interval: Optional[str] = 'month', rel: Optional[bool] = False) -> dict[str, dict[str, int]]:
     """Return a dictionary mapping each category to a dictionary returned by funding_per_month().
     
     Used for generating monthly funding line graphs for each selected category.
@@ -22,7 +22,10 @@ def funding_per_category(deals: list[CompressedDeal], category: str, metric: Opt
     categorized_deals_dict = categorize_deals(deals, category)
     funding_per_cat = {}
     for cat in categorized_deals_dict:
-        funding_per_cat[cat] = funding_per_month(categorized_deals_dict[cat], metric=metric)
+        if interval == 'month':
+            funding_per_cat[cat] = funding_per_month(categorized_deals_dict[cat], metric=metric, rel=rel)
+        elif interval == 'quarter':
+            funding_per_cat[cat] = funding_per_quarter(categorized_deals_dict[cat], metric=metric, rel=rel)
 
     return funding_per_cat
 
@@ -42,25 +45,83 @@ def categorize_deals(deals: list[CompressedDeal], category: str) -> dict[str, Co
     deals_dict = {}
     for deal in deals:
         if category == 'country':
-            if deal.country in deals_dict:
+            if deal.deal_size == 0 or deal.country == '':
+                continue
+            elif deal.country in deals_dict:
                 deals_dict[deal.country].append(deal)
             else:
                 deals_dict[deal.country] = [deal]
         elif category == 'industry':
-            if deal.industry in deals_dict:
+            if deal.deal_size == 0 or deal.industry == '':
+                continue
+            elif deal.industry in deals_dict:
                 deals_dict[deal.industry].append(deal)
             else:
                 deals_dict[deal.industry] = [deal]
         elif category == 'stage':
-            if deal.stage in deals_dict:
+            if deal.deal_size == 0 or deal.stage == '':
+                continue
+            elif deal.stage in deals_dict:
                 deals_dict[deal.stage].append(deal)
             else:
                 deals_dict[deal.stage] = [deal]
-
     return deals_dict
 
 
-def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum') -> dict[str, int]:
+def funding_per_quarter(deals: list[CompressedDeal], metric: Optional[str] = 'sum', rel: Optional[bool] = False) -> dict[str, int]:
+    """Return dictionary mapping quarters to funding amount based on a selected metric.
+    
+    Takes in a list of CompressedDeal generated from data_loader.py to created the corresponding dictionary.
+
+    Metrics include: sum, mean, median, max, min
+    
+    Sample Usage:
+    
+    >>> from data_loader import read_csv
+    >>> deals = read_csv('scraped_deal_data_15.csv', compressed=True)
+    >>> funding_per_month(deals, metric='sum)
+    {'Q1': ..., 'Q2': ..., ...}
+    """
+    quarterly_deals = {'Q1': [], 'Q2': [], 'Q3': [], 'Q4': []}
+    quarterly_deals_metrics = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    for deal in deals:
+        deal_date_month = datetime_to_month(deal.deal_date)
+        if deal_date_month in ['Jan', 'Feb', 'Mar']:
+            if rel:
+                quarterly_deals['Q1'].append(get_rel_deal_size(deal))
+            else:
+                quarterly_deals['Q1'].append(deal.deal_size)
+        elif deal_date_month in ['Apr', 'May', 'Jun']:
+            if rel:
+                quarterly_deals['Q2'].append(get_rel_deal_size(deal))
+            else:
+                quarterly_deals['Q2'].append(deal.deal_size)
+        elif deal_date_month in ['Jul', 'Aug', 'Sep']:
+            if rel:
+                quarterly_deals['Q3'].append(get_rel_deal_size(deal))
+            else:
+                quarterly_deals['Q3'].append(deal.deal_size)
+        elif deal_date_month in ['Oct', 'Nov', 'Dec']:
+            if rel:
+                quarterly_deals['Q4'].append(get_rel_deal_size(deal))
+            else:
+                quarterly_deals['Q4'].append(deal.deal_size)
+        
+    for m in quarterly_deals:
+        if metric == 'sum':
+            quarterly_deals_metrics[m] = sum(quarterly_deals[m])
+        elif metric == 'mean':
+            quarterly_deals_metrics[m] = get_mean(quarterly_deals[m])
+        elif metric == 'median':
+            quarterly_deals_metrics[m] = get_median(quarterly_deals[m])
+        elif metric == 'max':
+            quarterly_deals_metrics[m] = max(quarterly_deals[m])
+        elif metric == 'min':
+            quarterly_deals_metrics[m] = min(quarterly_deals[m])
+
+    return quarterly_deals_metrics
+
+def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum', rel: Optional[bool] = False) -> dict[str, int]:
     """Return dictionary mapping month to funding amount based on a selected metric.
     
     Takes in a list of CompressedDeal generated from data_loader.py to created the corresponding dictionary.
@@ -78,15 +139,18 @@ def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum'
     monthly_deals_metric = {month: 0 for month in MONTHS}
     for deal in deals:
         deal_date_month = datetime_to_month(deal.deal_date)
-        monthly_deals[deal_date_month].append(deal.deal_size)
+        if rel:
+            monthly_deals[deal_date_month].append(get_rel_deal_size(deal))
+        else:
+            monthly_deals[deal_date_month].append(deal.deal_size)
         
     for m in monthly_deals:
         if metric == 'sum':
             monthly_deals_metric[m] = sum(monthly_deals[m])
         elif metric == 'mean':
-            monthly_deals_metric[m] = statistics.mean(monthly_deals[m])
+            monthly_deals_metric[m] = get_mean(monthly_deals[m])
         elif metric == 'median':
-            monthly_deals_metric[m] = statistics.median(monthly_deals[m])
+            monthly_deals_metric[m] = get_median(monthly_deals[m])
         elif metric == 'max':
             monthly_deals_metric[m] = max(monthly_deals[m])
         elif metric == 'min':
@@ -98,3 +162,24 @@ def funding_per_month(deals: list[CompressedDeal], metric: Optional[str] = 'sum'
 def datetime_to_month(date: datetime) -> str:
     month_int = int(date.strftime('%m'))
     return MONTHS[month_int - 1]
+
+
+def get_mean(data_ls: list[int]) -> int:
+    if len(data_ls) == 0:
+        return 0
+    else:
+        return statistics.mean(data_ls)
+
+
+def get_median(data_ls: list[int]) -> int:
+    if len(data_ls) == 0:
+        return 0
+    else:
+        return statistics.median(data_ls)
+
+
+def get_rel_deal_size(deal: CompressedDeal):
+    if deal.total_funding == 0:
+        return 0 # Subjected to change 
+    else:
+        return deal.deal_size / deal.total_funding
