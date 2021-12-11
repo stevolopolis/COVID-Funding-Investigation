@@ -26,6 +26,8 @@ def save_data_to_csv(save_path, rows, file_exists=False):
             writer = csv.writer(f)
             writer.writerows(rows)
 
+# 2013 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-0a2898ca-c892-3562-b2da-956cdcbe6688&tab=companyDeal -- 5374
+# 2014 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-fcf5d344-5be1-3613-b6f4-2aca3b8876ce&tab=companyDeal -- 6633
 # 2015 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-f85da5b0-bd1c-3228-ac61-48063feff484&tab=companyDeal -- 8056
 # 2016 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-47e72abd-a74d-33f8-b72e-a80d82ad9d27&tab=companyDeal -- 8398
 # 2017 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-d8114bfb-f7bc-3690-8445-fcc9c54bcaa0&tab=companyDeal -- 9245
@@ -34,7 +36,9 @@ def save_data_to_csv(save_path, rows, file_exists=False):
 # 2020 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-20663eca-9f8c-38c0-81cb-c257f65f4c52&tab=companyDeal -- 9073
 # 2021 -- https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-b06ad0b8-f322-3a34-9b2a-d15eea37b7e5&tab=companyDeal -- 11966
 
-LINKS = ['https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-f85da5b0-bd1c-3228-ac61-48063feff484&tab=companyDeal',
+LINKS = ['https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-0a2898ca-c892-3562-b2da-956cdcbe6688&tab=companyDeal',
+         'https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-fcf5d344-5be1-3613-b6f4-2aca3b8876ce&tab=companyDeal',
+         'https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-f85da5b0-bd1c-3228-ac61-48063feff484&tab=companyDeal',
          'https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-47e72abd-a74d-33f8-b72e-a80d82ad9d27&tab=companyDeal',
          'https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-d8114bfb-f7bc-3690-8445-fcc9c54bcaa0&tab=companyDeal',
          'https://app.cbinsights.com/top-search/kg7paa?companyView=table&isid=0-6639b78a-e353-3b4c-b799-2853b5c13d52&tab=companyDeal',
@@ -46,11 +50,9 @@ USERNAME = 'stevents.luo@mail.utoronto.ca'
 PASSWORD = 'rma.HF!v38N5*jq'
 CSV_SAVE_PATH = 'scraped_deal_data_15.csv'
 
-year = 17
-for link in LINKS[2:]:
-    LINK = link
+for year in range(14, 15):
+    LINK = LINKS[year - 13]
     CSV_SAVE_PATH = 'scraped_deal_data_%s.csv' % year
-    year += 1
     driver = get_driver()
     driver.get(LINK)
     try:
@@ -61,7 +63,7 @@ for link in LINKS[2:]:
         pwd.send_keys(PASSWORD)
 
         driver.find_element(By.XPATH, '//*[@id="hero"]/div/section/form/div[3]/button').click()"""
-
+        
         n_deals_html = driver.find_element(By.XPATH, '//*[@id="react-tabs-5"]/div/div/div[2]/div/div/div[1]/div')
         n_deals = n_deals_html.text
         n_deals = n_deals.split(' ')[5]
@@ -170,9 +172,10 @@ for link in LINKS[2:]:
             next_page_button.click()
 
     finally:
-        driver.quit()
+        #driver.quit()
+        pass
 
-#cell1 = driver.find_element_by_class_name('flexItem flexItem--shrink')
+    #cell1 = driver.find_element_by_class_name('flexItem flexItem--shrink')
 
-#print(len(cell1))
+    #print(len(cell1))
 
