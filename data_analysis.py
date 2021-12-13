@@ -102,50 +102,32 @@ def categorize_deals(deals: list[CompressedDeal], category: str) -> dict[str, Co
     return deals_dict
 
 
-def funding_per_country(deals: list[CompressedDeal], year: str) -> dict[str, int]:
-    """Return a dictionary mapping countries to their total funding amounts during covid.
+def funding_per_category(deals: list[CompressedDeal], year: str, category: str) -> dict[str, int]:
+    """Return a dictionary mapping groups of a category to their
+    total funding amounts during covid.
     
     The covid period is defined to start from 20-Jan to 20-Dec. 
     (Optional: create slider to control the definition of 'covid period'.)
+
+    Precondition:
+        - year in ['15', '16', '17', '18', '19', '20', '21']
+        - category in ['country', 'company']
     
     Sample Usage:
     >>> from data_loader import read_csv
     >>> deals = read_csv('data/sample_deal_data_15.csv, compressed=True)
-    >>> funding_per_country(deals)
+    >>> funding_per_category(deals, '20', 'country')
     {'United States': 55000000, 'China': 20000000}
     """
-    country_deals_dict = categorize_deals(deals, 'country')
-    country_year_deals = {c: 0 for c in country_deals_dict}
-    for country in country_deals_dict:
-        for deal in country_deals_dict[country]:
+    cat_deals_dict = categorize_deals(deals, category)
+    cat_deals_dict = {c: 0 for c in cat_deals_dict}
+    for cat in cat_deals_dict:
+        for deal in cat_deals_dict[cat]:
             deal_year = datetime_to_year(deal.deal_date)
             if deal_year == year:
-                country_year_deals[country] += deal.deal_size
+                cat_deals_dict[cat] += deal.deal_size
     
-    return country_year_deals
-
-
-def funding_per_company(deals: list[CompressedDeal], year: str) -> dict[str, int]:
-    """Return a dictionary mapping companies to their total funding amounts during covid.
-    
-    The covid period is defined to start from 20-Jan to 20-Dec. 
-    (Optional: create slider to control the definition of 'covid period'.)
-    
-    Sample Usage:
-    >>> from data_loader import read_csv
-    >>> deals = read_csv('data/sample_deal_data_15.csv, compressed=True)
-    >>> funding_per_company(deals)
-    {'Spotify': 7500000, 'Slack': 3000,000}
-    """
-    company_deals_dict = categorize_deals(deals, 'company')
-    country_year_deals = {c: 0 for c in company_deals_dict}
-    for company in company_deals_dict:
-        for deal in company_deals_dict[company]:
-            deal_year = datetime_to_year(deal.deal_date)
-            if deal_year == year:
-                country_year_deals[company] += deal.deal_size
-
-    return country_year_deals
+    return cat_deals_dict
 
 
 def funding_per_quarter(deals: list[CompressedDeal],
