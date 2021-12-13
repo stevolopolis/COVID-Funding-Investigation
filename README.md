@@ -2,6 +2,7 @@
 ## User Manual
 ### Prerequisites
 1. Install Python-3.9
+
 2. Run `pip install -r requirements.txt`
 3. Chrome must be installed in your computer. (Other browswers are not supported yet.)
 4. Download the stable release of selenium chromedriver from this link: [Chromedriver](https://sites.google.com/chromium.org/driver/)
