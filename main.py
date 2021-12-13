@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     user_input_visualize = input('Start visualizing? ("y" or "n")\n')
     while user_input_visualize == 'y':
-        user_input_graph_type = input('Would you like to visualize pie graphs or line graphs ("p" or "l")\n')
+        user_input_graph_type = input('Would you like to visualize pie graphs or line graphs? ("p" or "l")\n')
         if user_input_graph_type == 'l':
             user_input_line_cat = input('What category would you like to visualize? ("sum", "country", "industry", "stage")\n')
             user_input_metric = input('What statistical metric would you like to use? ("sum", "mean", "median", "max", "min")\n')
