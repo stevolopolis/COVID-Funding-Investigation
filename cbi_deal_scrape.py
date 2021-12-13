@@ -22,6 +22,8 @@ import math
 from typing import Optional, Any
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 # Links to each year of deals data and their subsequent total number of deals
@@ -177,7 +179,7 @@ class DataScraper:
         self.driver.get(link)
 
         # Uncomment the log_in line when this is first time running this code.
-        # log_in(self.driver, self.username, self.password)
+        self.log_in()
         
         return self.get_n_pages()
 
@@ -210,22 +212,26 @@ class DataScraper:
         analysis as most of the left out deals having funding less than 0.5M, if not 0 or N/A.
         
         Note, this function is only applicable for this project's specific filtered search."""
-        n_deals_html = self.driver.find_element(By.XPATH,
-                                                '//*[@id="react-tabs-5"]/div/div/div[2]/div/div/div[1]/div')
-        n_deals = n_deals_html.text
-        n_deals = n_deals.split(' ')[5]
-        n_pages = math.ceil(int(n_deals) / 25)
+        # Try-finally block used to make sure that the website it fully loaded
+        # after logging in before starting the web scraping.
+        try:
+            _ = WebDriverWait(self.driver, 100).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="react-tabs-5"]/div/div/div[2]/div/div/div[1]/div'))
+            )
+        finally:
+            n_deals_html = self.driver.find_element(By.XPATH,
+                                                    '//*[@id="react-tabs-5"]/div/div/div[2]/div/div/div[1]/div')
+            n_deals = n_deals_html.text
+            n_deals = n_deals.split(' ')[5]
+            n_pages = math.ceil(int(n_deals) / 25)
 
-        return n_pages
+            return n_pages
 
 
 def get_driver() -> webdriver.Chrome:
     """Return the selenium chrome webdriver for accessing a webpage in Chrome.
     Code referenced from selenium documentation and StackOverFlow."""
-    options = webdriver.chrome.options.Options()
-    options.add_argument("user-data-dir=C:\\Users\\steve\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 2")
-    options.add_argument("profile-directory=Profile 2")
-    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     return driver
 
 
