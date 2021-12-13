@@ -6,7 +6,6 @@ csv files under the sub-directory 'data'.
 If all deal data from 2015 to 2021 are scraped, there should be around
 67,000+ instances of data stored.
 
-
 Copyright and Usage Information
 ===============================
 
@@ -52,7 +51,7 @@ HEADER = ['Companies', 'Investment Stage', 'Deal Size', 'Deal Date', 'Round Inve
 
 class DataScraper:
     """A data scraper object that scrapes the deals data from specified CB-Insights webpages.
-    Attribute Instances:
+    Instance Attributes:
         - username: The username to log in to CB-Insights
         - password: The password to log in to CB-Insights
     """
