@@ -1,3 +1,19 @@
+"""Csv Data Loading
+
+This file contains specific object classes for saving our deals data and
+functions for reading the csv files containing our scraped data.
+
+Copyright and Usage Information
+===============================
+
+This file is provided solely for the personal and private use of interested personel
+for investigating the funding data over the COVID-19 period. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2021 Steven T. S., Luo.
+"""
+
 import csv
 import datetime
 from dataclasses import dataclass
@@ -105,7 +121,7 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
 
 
 def str_funding_to_int(funding_str: str) -> int:
-    """Convert funding strings into integer values.
+    """Return integer values of funding strings.
     
     Funding strings in CSV files are in the following format: '$1,000.00M'.
     For rows/deals that do not have funding amount data, they will be saved
@@ -133,7 +149,7 @@ def filter_str_stage(stage_str: str) -> str:
 
 
 def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
-    """Convert deal date strings into datetime objects.
+    """Return datetime objects from deal_date_str strings.
     
     Deal date strings in CSV files are in the following format: '10/19/2017'
     
@@ -149,7 +165,8 @@ def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
 
 
 def str_investors_to_list(investors_str: str) -> list[str]:
-    """Convert investors strings into list of investor strings.
+    """Return a list of investor strings from a string of investors 
+    separated by commas.
     
     Sample Usage:
     
