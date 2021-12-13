@@ -33,7 +33,7 @@ def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str]
 
     multi_interval_deals = {}
     for year in range(15, 22):
-        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
         deals = read_csv(csv_filepath, compressed=True)
         if interval == 'month':
             interval_deals = funding_per_month(deals, metric=metric, rel=rel)
@@ -73,7 +73,7 @@ def visualize_categories(category: Optional[str] = 'stage',
     while visualize:
         sum_monthly_deals = {}
         for year in range(15, 22):
-            csv_filepath = 'scraped_deal_data_%s.csv' % year
+            csv_filepath = 'data/scraped_deal_data_%s.csv' % year
             deals = read_csv(csv_filepath, compressed=True)
             categorized_deals = funding_per_interval(deals, category=category, metric=metric, interval=interval, rel=rel)
             for sub_category in categorized_deals:
@@ -111,7 +111,7 @@ def visualize_multi_year_pie(category: Optional[str] = 'country',
 
     multi_year_deals = []
     for year in range(15, 22):
-        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
         deals = read_csv(csv_filepath, compressed=True)
         multi_year_deals += deals
 
@@ -134,7 +134,7 @@ def visualize_covid_pie(category: Optional[str] = 'country', top_n: Optional[int
 
     multi_year_deals = []
     for year in range(15, 22):
-        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
         deals = read_csv(csv_filepath, compressed=True)
         multi_year_deals += deals
 
