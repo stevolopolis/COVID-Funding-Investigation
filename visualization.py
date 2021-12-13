@@ -26,14 +26,14 @@ COLORS = ['gold', 'lightcoral', 'yellowgreen', 'turquoise', 'cornflowerblue',
           'mediumpurple', 'orange', 'palegreen', 'slategray', 'peru']
 
 
-def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str] = 'month', rel: Optional[bool] = False) -> None:
+def visualize_raw_funding(csv_dir: str, metric: Optional[str] = 'sum', interval: Optional[str] = 'month', rel: Optional[bool] = False) -> None:
     """Visualize line graph of raw funding amounts from 2015 to 2020.
     Includes options to select metrics (as mentioned in data_analysis.py) and intervals ('month', 'quarter')."""
     _, ax = plt.subplots(figsize=(10, 6))
 
     multi_interval_deals = {}
     for year in range(15, 22):
-        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
+        csv_filepath = '%s/scraped_deal_data_%s.csv' % (csv_dir, year)
         deals = read_csv(csv_filepath, compressed=True)
         if interval == 'month':
             interval_deals = funding_per_month(deals, metric=metric, rel=rel)
@@ -48,7 +48,8 @@ def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str]
     plt.show()
 
 
-def visualize_categories(category: Optional[str] = 'stage',
+def visualize_categories(csv_dir: str,
+                         category: Optional[str] = 'stage',
                          metric: Optional[str] = 'sum',
                          interval: Optional[str] = 'quarter',
                          rel: Optional[bool] = False) -> None:
@@ -73,7 +74,7 @@ def visualize_categories(category: Optional[str] = 'stage',
     while visualize:
         sum_monthly_deals = {}
         for year in range(15, 22):
-            csv_filepath = 'data/scraped_deal_data_%s.csv' % year
+            csv_filepath = '%s/scraped_deal_data_%s.csv' % (csv_dir, year)
             deals = read_csv(csv_filepath, compressed=True)
             categorized_deals = funding_per_interval(deals, category=category, metric=metric, interval=interval, rel=rel)
             for sub_category in categorized_deals:
@@ -95,7 +96,8 @@ def visualize_categories(category: Optional[str] = 'stage',
             plt.show()
 
 
-def visualize_multi_year_pie(category: Optional[str] = 'country',
+def visualize_multi_year_pie(csv_dir: str,
+                             category: Optional[str] = 'country',
                              top_n: Optional[int] = 4,
                              start_year: Optional[str] = '18',
                              end_year: Optional[str] = '21') -> None:
@@ -111,7 +113,7 @@ def visualize_multi_year_pie(category: Optional[str] = 'country',
 
     multi_year_deals = []
     for year in range(15, 22):
-        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
+        csv_filepath = '%s/scraped_deal_data_%s.csv' % (csv_dir, year)
         deals = read_csv(csv_filepath, compressed=True)
         multi_year_deals += deals
 
@@ -125,7 +127,7 @@ def visualize_multi_year_pie(category: Optional[str] = 'country',
     plt.show()
 
 
-def visualize_covid_pie(category: Optional[str] = 'country', top_n: Optional[int] = 4) -> None:
+def visualize_covid_pie(csv_dir: str, category: Optional[str] = 'country', top_n: Optional[int] = 4) -> None:
     """Visualize top n funding groups of a selected category using a pie graph.
     
     The pie graph will include n + 1 wedges, with one extra wedge that 
@@ -134,7 +136,7 @@ def visualize_covid_pie(category: Optional[str] = 'country', top_n: Optional[int
 
     multi_year_deals = []
     for year in range(15, 22):
-        csv_filepath = 'data/scraped_deal_data_%s.csv' % year
+        csv_filepath = '%s/scraped_deal_data_%s.csv' % (csv_dir, year)
         deals = read_csv(csv_filepath, compressed=True)
         multi_year_deals += deals
 
