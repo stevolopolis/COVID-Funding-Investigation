@@ -58,16 +58,16 @@ def visualize_categories(csv_dir: str,
     
     Usage Sample:
     >>> visualize_categories(category='stage', metric='sum', interval='quarrter', rel=False)
-    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    ['IPO', 'Seed', 'Series A', 'Series B', 'Series C', 'Series D', 'Series E']
     'Select a sub-category or "q" to exit or "show" to visualize.'
     >>> IPO
-    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    ['IPO', 'Seed', 'Series A', 'Series B', 'Series C', 'Series D', 'Series E']
     'Select a sub-category or "q" to exit or "show" to visualize.'
-    >>> Stage A
-    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    >>> Series A
+    ['IPO', 'Seed', 'Series A', 'Series B', 'Series C', 'Series D', 'Series E']
     'Select a sub-category or "q" to exit or "show" to visualize.'
     >>> show
-    ### Graph with two funding trend lines (IPO & Stage A) will be shown. ###
+    ### Graph with two funding trend lines (IPO & Series A) will be shown. ###
     """
     visualize = True
     _, ax = plt.subplots(figsize=(10, 6))

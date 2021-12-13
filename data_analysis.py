@@ -284,10 +284,10 @@ def get_rel_deal_size(deal: CompressedDeal) -> float:
     Return 1 if CompressedDeal.total_funding is zero.
 
     Sample Usage:
-    >>> deal = CompressedDeal('Shopify', 'Stage A', 1000000, datetime(2020, 10, 23), 'eCommerce', 'Canada', 2000000)
+    >>> deal = CompressedDeal('Shopify', 'Series A', 1000000, datetime(2020, 10, 23), 'eCommerce', 'Canada', 2000000)
     >>> get_rel_deal_size(deal)
     0.5
-    >>> deal = CompressedDeal('Spotify', 'Stage A', 1000000, datetime(2017, 5, 2), 'Internet', 'United States', 0)
+    >>> deal = CompressedDeal('Spotify', 'Series A', 1000000, datetime(2017, 5, 2), 'Internet', 'United States', 0)
     >>> get_rel_deal_size(deal)
     1.0
     """
