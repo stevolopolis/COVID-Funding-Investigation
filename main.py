@@ -1,7 +1,7 @@
 from matplotlib import use
 from data_loader import read_csv
-from data_analysis import funding_per_month, funding_per_interval, funding_per_quarter
-from visualization import vis_funding_per_interval, vis_category_line, vis_covid_line
+from data_analysis import funding_per_month, funding_per_interval, funding_per_quarter, funding_per_company, funding_per_country
+from visualization import vis_funding_per_interval, vis_category_line, vis_covid_line, vis_category_pie
 from typing import Optional
 import matplotlib.pyplot as plt
 
@@ -39,6 +39,7 @@ def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str]
     plt.legend()
     plt.show()
 
+
 # For visualizing selected categories
 def visualize_categories(category: Optional[str] = 'stage',
                          metric: Optional[str] = 'sum',
@@ -73,8 +74,43 @@ def visualize_categories(category: Optional[str] = 'stage',
             plt.show()
 
 
+def visualize_multi_year_pie(category: Optional[str] = 'country', start_year: Optional[str] = '18', end_year: Optional[str] = '21') -> None:
+    """"""
+    fig, ax = plt.subplots(2, 2, figsize=(9, 7))
+
+    multi_year_deals = []
+    for year in range(15, 22):
+        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        deals = read_csv(csv_filepath, compressed=True)
+        multi_year_deals += deals
+
+    for selected_year in range(int(start_year), int(end_year) + 1):
+        category_fundings = funding_per_country(multi_year_deals, year=str(selected_year))
+        vis_category_pie(category_fundings, '%s Total Funding Pie Chart' % selected_year, ax=ax[(selected_year - 18) // 2, (selected_year - 18) % 2])
+    plt.show()
+
+
+def visualize_covid_pie(category: Optional[str] = 'country', top_n: Optional[int] = 4) -> None:
+    """"""
+    fig, ax = plt.subplots(figsize=(9, 7))
+
+    multi_year_deals = []
+    for year in range(15, 22):
+        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        deals = read_csv(csv_filepath, compressed=True)
+        multi_year_deals += deals
+
+    if category == 'country':
+        category_fundings = funding_per_country(multi_year_deals, year='20')
+        vis_category_pie(category_fundings, 'COVID Period Total Funding Pie Chart For Country', top_n=top_n, ax=ax)
+    elif category == 'company':
+        category_fundings = funding_per_company(multi_year_deals, year='20')
+        vis_category_pie(category_fundings, 'COVID Period Total Funding Pie Chart For Companies', top_n=top_n, ax=ax)
+    plt.show()
+
+
 if __name__ == '__main__':
-    user_input_visualize = input('Start visualizing? ("y" or "n")\n')
+    """user_input_visualize = input('Start visualizing? ("y" or "n")\n')
     while user_input_visualize == 'y':
         user_input_cat = input('What category would you like to visualize? ("sum", "country", "industry", "stage")\n')
         user_input_metric = input('What statistical metric would you like to use? ("sum", "mean", "median", "max", "min")\n')
@@ -89,4 +125,7 @@ if __name__ == '__main__':
         else:
             visualize_categories(category=user_input_cat, metric=user_input_metric, interval=user_input_interval, rel=user_input_rel)
 
-        user_input_visualize = input('Continue visualizing? ("y" or "n")\n')
+        user_input_visualize = input('Continue visualizing? ("y" or "n")\n')"""
+
+    #visualize_multi_year_pie(category='country', start_year='18', end_year='21')
+    visualize_covid_pie(category='country', top_n=5)
