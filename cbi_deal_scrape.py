@@ -177,8 +177,6 @@ class DataScraper:
     def initialize_link(self, link: str) -> webdriver.Chrome:
         """Return chrome webdriver and initialize webpage."""
         self.driver.get(link)
-
-        # Uncomment the log_in line when this is first time running this code.
         self.log_in()
         
         return self.get_n_pages()
