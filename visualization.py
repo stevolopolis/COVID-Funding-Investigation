@@ -18,10 +18,142 @@ This file is Copyright (c) 2021 Steven T. S., Luo.
 
 import math
 from typing import Optional
+from data_loader import read_csv
+from data_analysis import *
 import matplotlib.pyplot as plt
 
 COLORS = ['gold', 'lightcoral', 'yellowgreen', 'turquoise', 'cornflowerblue',
           'mediumpurple', 'orange', 'palegreen', 'slategray', 'peru']
+
+
+def visualize_raw_funding(metric: Optional[str] = 'sum', interval: Optional[str] = 'month', rel: Optional[bool] = False) -> None:
+    """Visualize line graph of raw funding amounts from 2015 to 2020.
+    Includes options to select metrics (as mentioned in data_analysis.py) and intervals ('month', 'quarter')."""
+    _, ax = plt.subplots(figsize=(10, 6))
+
+    multi_interval_deals = {}
+    for year in range(15, 22):
+        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        deals = read_csv(csv_filepath, compressed=True)
+        if interval == 'month':
+            interval_deals = funding_per_month(deals, metric=metric, rel=rel)
+        elif interval == 'quarter':
+            interval_deals = funding_per_quarter(deals, metric=metric, rel=rel)
+        multi_interval_deals[year] = interval_deals
+
+    v_interval_deals = concat_monthly_deals(multi_interval_deals)
+    vis_funding_per_interval(v_interval_deals, '2015-2021 Total Funding Graph', '%s of Funds' % metric, ax=ax)
+    vis_covid_line(interval)
+    plt.legend()
+    plt.show()
+
+
+def visualize_categories(category: Optional[str] = 'stage',
+                         metric: Optional[str] = 'sum',
+                         interval: Optional[str] = 'quarter',
+                         rel: Optional[bool] = False) -> None:
+    """Visualize line graphs of funding amounts based on the selected category.
+    Takes in inference-time user input for the sub-categories to be visualized.
+    
+    Usage Sample:
+    >>> visualize_categories(category='stage', metric='sum', interval='quarrter', rel=False)
+    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    'Select a sub-category or "q" to exit or "show" to visualize.'
+    >>> IPO
+    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    'Select a sub-category or "q" to exit or "show" to visualize.'
+    >>> Stage A
+    ['IPO', 'Seed', 'Stage A', 'Stage B', 'Stage C', 'Stage D', 'Stage E']
+    'Select a sub-category or "q" to exit or "show" to visualize.'
+    >>> show
+    ### Graph with two funding trend lines (IPO & Stage A) will be shown. ###
+    """
+    visualize = True
+    _, ax = plt.subplots(figsize=(10, 6))
+    while visualize:
+        sum_monthly_deals = {}
+        for year in range(15, 22):
+            csv_filepath = 'scraped_deal_data_%s.csv' % year
+            deals = read_csv(csv_filepath, compressed=True)
+            categorized_deals = funding_per_interval(deals, category=category, metric=metric, interval=interval, rel=rel)
+            for sub_category in categorized_deals:
+                if sub_category not in sum_monthly_deals:
+                    sum_monthly_deals[sub_category] = {}
+                sum_monthly_deals[sub_category][year] = categorized_deals[sub_category]
+
+        print(list(categorized_deals.keys()))
+        selected_category = input('Select a sub-category or "q" to exit or "show" to visualize.\n')
+        if selected_category == 'q':
+            visualize = False
+        elif selected_category in sum_monthly_deals:
+            v_monthly_deals = concat_monthly_deals(sum_monthly_deals[selected_category])
+            vis_funding_per_interval(v_monthly_deals, '2015-2021 Total Funding Graph For %s' % selected_category, selected_category, ax=ax)
+        elif selected_category == 'show':
+            visualize = False
+            vis_covid_line(interval)
+            plt.legend()
+            plt.show()
+
+
+def visualize_multi_year_pie(category: Optional[str] = 'country',
+                             top_n: Optional[int] = 4,
+                             start_year: Optional[str] = '18',
+                             end_year: Optional[str] = '21') -> None:
+    """Visualize top n funding groups of a selected category in multiple years
+    using pie graphs.
+
+    One pie graph will be used to report one year of funding statistics, 
+    with years ranging from the start_year to the end_year.
+    
+    The pie graph will include n + 1 wedges, with one extra wedge that 
+    reports the sum of all the other groups."""
+    _, ax = plt.subplots(2, 2, figsize=(9, 7))
+
+    multi_year_deals = []
+    for year in range(15, 22):
+        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        deals = read_csv(csv_filepath, compressed=True)
+        multi_year_deals += deals
+
+    for selected_year in range(int(start_year), int(end_year) + 1):
+        category_fundings = funding_per_category(multi_year_deals, str(selected_year), category)
+        vis_category_pie(category_fundings,
+                         '%s Total Funding Pie Chart For %s' % (selected_year, category),
+                         top_n=top_n,
+                         ax=ax[(selected_year - 18) // 2, (selected_year - 18) % 2])
+
+    plt.show()
+
+
+def visualize_covid_pie(category: Optional[str] = 'country', top_n: Optional[int] = 4) -> None:
+    """Visualize top n funding groups of a selected category using a pie graph.
+    
+    The pie graph will include n + 1 wedges, with one extra wedge that 
+    reports the sum of all the other groups."""
+    _, ax = plt.subplots(figsize=(9, 7))
+
+    multi_year_deals = []
+    for year in range(15, 22):
+        csv_filepath = 'scraped_deal_data_%s.csv' % year
+        deals = read_csv(csv_filepath, compressed=True)
+        multi_year_deals += deals
+
+    category_fundings = funding_per_category(multi_year_deals, '20', category)
+    vis_category_pie(category_fundings, 'COVID Period Total Funding Pie Chart For %s' % category, top_n=top_n, ax=ax)
+
+    plt.show()
+
+
+def concat_monthly_deals(monthly_deals: dict[str, dict[str, int]]) -> dict[str, int]:
+    """Return a dictionary mapping dates in the form of '<year>-<month>' to the corresponding fundings.
+    Takes in a dictionary mapping years to a dictionary of monthly deals."""
+    cat_monthly_deals = {}
+    for year in range(15, 22):
+        for month in monthly_deals[year]:
+            date = '%s-%s' % (year, month)
+            cat_monthly_deals[date] = monthly_deals[year][month]
+
+    return cat_monthly_deals
 
 
 def vis_funding_per_interval(interval_deals: dict[str, int],
