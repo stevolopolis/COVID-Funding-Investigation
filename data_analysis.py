@@ -120,14 +120,14 @@ def funding_per_category(deals: list[CompressedDeal], year: str, category: str) 
     {'United States': 55000000, 'China': 20000000}
     """
     cat_deals_dict = categorize_deals(deals, category)
-    cat_deals_dict = {c: 0 for c in cat_deals_dict}
+    cat_deal_sum_dict = {c: 0 for c in cat_deals_dict}
     for cat in cat_deals_dict:
         for deal in cat_deals_dict[cat]:
             deal_year = datetime_to_year(deal.deal_date)
             if deal_year == year:
-                cat_deals_dict[cat] += deal.deal_size
+                cat_deal_sum_dict[cat] += deal.deal_size
     
-    return cat_deals_dict
+    return cat_deal_sum_dict
 
 
 def funding_per_quarter(deals: list[CompressedDeal],
