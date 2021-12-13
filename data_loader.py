@@ -22,7 +22,7 @@ from dataclasses import dataclass
 @dataclass
 class Deal:
     """A funding deal made to a company.
-    
+
     Rounds include: seed, A-E, IPO.
 
     This dataclass will be used to store data from the csv files in a more orderly manner.
@@ -52,9 +52,9 @@ class Deal:
 
 
 @dataclass
-class CompressedDeal: 
+class CompressedDeal:
     """A funding deal made to a company.
-    
+
     Rounds include: seed, A-E, IPO.
 
     This dataclass is a compressed version of Deal which could save memory space during inference.
@@ -87,7 +87,7 @@ def read_csv(csv_path: str, compressed: bool) -> list[CompressedDeal]:
     rather than the identities of the companies or the investors.
 
     The data in csv files have 10 columns, each corresponding to a category of data as shown in the
-    order of the instance attributes in Deal. All data are stored as strings, hence corresponding 
+    order of the instance attributes in Deal. All data are stored as strings, hence corresponding
     data type conversion will also be handled in this function."""
     deal_ls = []
     with open(csv_path, encoding='utf-8') as f:
@@ -136,15 +136,26 @@ def str_funding_to_int(funding_str: str) -> int:
     >>> str_funding_to_int('N/A')
     0
     """
-    if funding_str == '' or funding_str == 'N/A':
+    if funding_str in ('N/A', ''):
         return 0
     else:
-        funding_str = funding_str[1:-1].replace(',', '') # remove '$', 'M', and ',' from string
+        funding_str = funding_str[1:-1].replace(',', '')  # remove '$', 'M', and ',' from string
         funding_int = float(funding_str) * 1000000
         return funding_int
 
 
 def filter_str_stage(stage_str: str) -> str:
+    """Return simplified funding-stage string.
+
+    CBI divides each funding stage (e.g. Seed, A, B, C) into even smaller stages
+    such as (I, II, III, etc.). These smaller divisions of funding stages are
+    not necessary for our analysis and may cause confusions at times.
+    
+    Sample Usage:
+    
+    >>> filter_str_stage('Stage A - II')
+    'Stage A'
+    """
     return stage_str.split(' - ')[0]
 
 
@@ -165,7 +176,7 @@ def str_deal_date_to_datetime(deal_date_str: str) -> datetime.datetime:
 
 
 def str_investors_to_list(investors_str: str) -> list[str]:
-    """Return a list of investor strings from a string of investors 
+    """Return a list of investor strings from a string of investors
     separated by commas.
     
     Sample Usage:
