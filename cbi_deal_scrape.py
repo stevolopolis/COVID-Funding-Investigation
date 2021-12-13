@@ -245,14 +245,3 @@ def save_data_to_csv(save_path: str, row: list[str], file_exists: Optional[bool]
         with open(save_path, 'a', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(row)
-
-
-if __name__ == '__main__':
-    import python_ta
-
-    python_ta.check_all(config={
-    'extra-imports': ['csv', 'math', 'typing', 'selenium', 'webdriver_manager'],  # the names (strs) of imported modules
-    'allowed-io': [],     # the names (strs) of functions that call print/open/input
-    'max-line-length': 100,
-    'disable': ['R1705', 'C0200']
-    })
