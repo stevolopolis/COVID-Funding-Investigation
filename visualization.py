@@ -109,7 +109,7 @@ def visualize_multi_year_pie(csv_dir: str,
     
     The pie graph will include n + 1 wedges, with one extra wedge that 
     reports the sum of all the other groups."""
-    _, ax = plt.subplots(2, 2, figsize=(9, 7))
+    _, ax = plt.subplots(2, 2, figsize=(11, 7))
 
     multi_year_deals = []
     for year in range(15, 22):
@@ -120,7 +120,7 @@ def visualize_multi_year_pie(csv_dir: str,
     for selected_year in range(int(start_year), int(end_year) + 1):
         category_fundings = funding_per_category(multi_year_deals, str(selected_year), category)
         vis_category_pie(category_fundings,
-                         '%s Total Funding Pie Chart For %s' % (selected_year, category),
+                         '20%s Total Funding Pie Chart For %s' % (selected_year, category),
                          top_n=top_n,
                          ax=ax[(selected_year - 18) // 2, (selected_year - 18) % 2])
 

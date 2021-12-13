@@ -54,22 +54,25 @@ class DataScraper:
     Instance Attributes:
         - username: The username to log in to CB-Insights
         - password: The password to log in to CB-Insights
+        - save_dir: The sub directory to save csv files to. (Originally saved to 'data' sub directory)
     """
     driver: webdriver.Chrome
     username: str
     password: str
+    save_dir: str
 
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self, username: str, password: str, save_dir: str) -> None:
         self.driver = get_driver()
         self.username = username
         self.password = password
+        self.save_dir = save_dir
 
     def scrape_15_21(self) -> None:
         """Scrape the deals data from 2015 to 2021 and save the data to multiple csv file.
         The csv files are saved in a 'data' sub directory."""
         for year in range(15, 22):
             data_link = LINKS[year - 13]
-            csv_save_path = 'data/scraped_deal_data_%s.csv' % year
+            csv_save_path = '%s/scraped_deal_data_%s.csv' % (self.save_dir, year)
 
             self.scrape_year(data_link, csv_save_path)
 

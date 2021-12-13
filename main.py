@@ -26,11 +26,13 @@ This file is Copyright (c) 2021 Steven T. S., Luo.
 
 from cbi_deal_scrape import DataScraper
 from visualization import visualize_raw_funding, visualize_categories, visualize_multi_year_pie, visualize_covid_pie
+
 # My Personal logins for CB-insights using UofT account.
 # Do not disclose this information to other people.
 USERNAME = 'stevents.luo@mail.utoronto.ca'
 PASSWORD = 'rma.HF!v38N5*jq'
-CSV_SAVE_DIR = 'data'
+CSV_SAVE_DIR = 'data'  # directory containing / to save webscraped csv files
+N_PIE_WEDGES = 4  # number of wedges in the pie graphs. Default = 4 for clarity
 
 if __name__ == '__main__':
     user_input_scrape = input('Have you scraped the data? ("y" or "n")\n')
@@ -59,8 +61,8 @@ if __name__ == '__main__':
             user_input_pie_cat = input('What category would you like to visualize? ("company", "country", "industry", "stage")\n')
             user_input_multi_year = input('Would you like to visualize multiple years of pie graph? ("y" or "n")\n')
             if user_input_multi_year == 'y':
-                visualize_multi_year_pie(CSV_SAVE_DIR, category=user_input_pie_cat, top_n=5, start_year='18', end_year='21')
+                visualize_multi_year_pie(CSV_SAVE_DIR, category=user_input_pie_cat, top_n=N_PIE_WEDGES, start_year='18', end_year='21')
             elif user_input_multi_year == 'n':
-                visualize_covid_pie(CSV_SAVE_DIR, category=user_input_pie_cat, top_n=5)
+                visualize_covid_pie(CSV_SAVE_DIR, category=user_input_pie_cat, top_n=N_PIE_WEDGES)
 
         user_input_visualize = input('Continue visualizing? ("y" or "n")\n')
