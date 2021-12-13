@@ -1,7 +1,5 @@
-# For Testing and code checking
-pytest
-python-ta
-
+# For webscraping
+selenium
+webdriver-manager
 # For data analysis
 matplotlib
-scikit-learn
