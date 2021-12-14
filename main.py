@@ -31,7 +31,7 @@ from visualization import visualize_raw_funding, visualize_categories, visualize
 # Do not disclose this information to other people.
 USERNAME = 'stevents.luo@mail.utoronto.ca'
 PASSWORD = 'rma.HF!v38N5*jq'
-CSV_SAVE_DIR = 'data_sample'  # directory containing / to save webscraped csv files
+CSV_SAVE_DIR = 'data'  # directory containing / to save webscraped csv files
 N_PIE_WEDGES = 4  # number of wedges in the pie graphs. Default = 4 for clarity
 
 if __name__ == '__main__':

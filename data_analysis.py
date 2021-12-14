@@ -104,7 +104,7 @@ def categorize_deals(deals: list[CompressedDeal], category: str) -> dict[str, Co
 
 def funding_per_category(deals: list[CompressedDeal], year: str, category: str) -> dict[str, int]:
     """Return a dictionary mapping groups of a category to their
-    total funding amounts during covid.
+    total funding amounts in the selected year.
     
     The covid period is defined to start from 20-Jan to 20-Dec. 
     (Optional: create slider to control the definition of 'covid period'.)

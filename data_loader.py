@@ -153,8 +153,8 @@ def filter_str_stage(stage_str: str) -> str:
     
     Sample Usage:
     
-    >>> filter_str_stage('Stage A - II')
-    'Stage A'
+    >>> filter_str_stage('Series A - II')
+    'Series A'
     """
     return stage_str.split(' - ')[0]
 

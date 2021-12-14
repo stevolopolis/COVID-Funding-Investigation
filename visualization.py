@@ -41,7 +41,7 @@ def visualize_raw_funding(csv_dir: str, metric: Optional[str] = 'sum', interval:
             interval_deals = funding_per_quarter(deals, metric=metric, rel=rel)
         multi_interval_deals[year] = interval_deals
 
-    v_interval_deals = concat_monthly_deals(multi_interval_deals)
+    v_interval_deals = concat_interval_deals(multi_interval_deals)
     vis_funding_per_interval(v_interval_deals, '2015-2021 Total Funding Graph', '%s of Funds' % metric, ax=ax)
     vis_covid_line(interval)
     plt.legend()
@@ -87,8 +87,8 @@ def visualize_categories(csv_dir: str,
         if selected_category == 'q':
             visualize = False
         elif selected_category in sum_monthly_deals:
-            v_monthly_deals = concat_monthly_deals(sum_monthly_deals[selected_category])
-            vis_funding_per_interval(v_monthly_deals, '2015-2021 Total Funding Graph For %s' % selected_category, selected_category, ax=ax)
+            v_monthly_deals = concat_interval_deals(sum_monthly_deals[selected_category])
+            vis_funding_per_interval(v_monthly_deals, '2015-2021 Total Funding Graph', selected_category, ax=ax)
         elif selected_category == 'show':
             visualize = False
             vis_covid_line(interval)
@@ -108,7 +108,13 @@ def visualize_multi_year_pie(csv_dir: str,
     with years ranging from the start_year to the end_year.
     
     The pie graph will include n + 1 wedges, with one extra wedge that 
-    reports the sum of all the other groups."""
+    reports the sum of all the other groups.
+    
+    Precondition:
+        - start_year in ['15', '16', '17'', '18']
+        - end_year in ['18', '19', '20'', '21']
+        - int(end_year) - int(start_year) == 3
+    """
     _, ax = plt.subplots(2, 2, figsize=(11, 7))
 
     multi_year_deals = []
@@ -131,7 +137,11 @@ def visualize_covid_pie(csv_dir: str, category: Optional[str] = 'country', top_n
     """Visualize top n funding groups of a selected category using a pie graph.
     
     The pie graph will include n + 1 wedges, with one extra wedge that 
-    reports the sum of all the other groups."""
+    reports the sum of all the other groups.
+    
+    Precondition:
+        - 1 <= top_n < len(category_fundings)
+    """
     _, ax = plt.subplots(figsize=(9, 7))
 
     multi_year_deals = []
@@ -146,16 +156,16 @@ def visualize_covid_pie(csv_dir: str, category: Optional[str] = 'country', top_n
     plt.show()
 
 
-def concat_monthly_deals(monthly_deals: dict[str, dict[str, int]]) -> dict[str, int]:
+def concat_interval_deals(interval_deals: dict[str, dict[str, int]]) -> dict[str, int]:
     """Return a dictionary mapping dates in the form of '<year>-<month>' to the corresponding fundings.
     Takes in a dictionary mapping years to a dictionary of monthly deals."""
-    cat_monthly_deals = {}
+    cat_interval_deals = {}
     for year in range(15, 22):
-        for month in monthly_deals[year]:
-            date = '%s-%s' % (year, month)
-            cat_monthly_deals[date] = monthly_deals[year][month]
+        for interval in interval_deals[year]:
+            date = '%s-%s' % (year, interval)
+            cat_interval_deals[date] = interval_deals[year][interval]
 
-    return cat_monthly_deals
+    return cat_interval_deals
 
 
 def vis_funding_per_interval(interval_deals: dict[str, int],
@@ -244,7 +254,7 @@ def vis_covid_line(interval: str) -> None:
     
     COVID-19 assumed to start in 2020 January / 2020 Q1."""
     if interval == 'month':
-        plt.plot('20-Jan', color='r', linestyle='-', label='Start of COVID')
+        plt.axvline(x='20-Jan', color='r', linestyle='-', label='Start of COVID')
     elif interval == 'quarter':
         plt.axvline(x='20-Q1', color='r', linestyle='-', label='Start of COVID')
 
