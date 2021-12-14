@@ -210,7 +210,7 @@ class DataScraper:
         analysis as most of the left out deals having funding less than 0.5M, if not 0 or N/A.
         
         Note, this function is only applicable for this project's specific filtered search."""
-        # Try-finally block used to make sure that the website it fully loaded
+        # Try-finally block used to make sure that the website is fully loaded
         # after logging in before starting the web scraping.
         try:
             _ = WebDriverWait(self.driver, 100).until(
