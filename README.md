@@ -3,7 +3,7 @@
 ### Prerequisites
 1. Install Python-3.9
 2. Run `pip install -r requirements.txt`
-3. Chrome must be installed in your computer. (Other browswers are not supported yet.)
+3. Chrome must be installed in your computer. (Other browsers are not supported yet.)
 4. Download all files in this repository, espcially the "data" folder which contains the scraped data.
 ### Running the code
 1. To webscrape data from CB-Insights.
